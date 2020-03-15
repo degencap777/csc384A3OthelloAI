@@ -9,6 +9,8 @@ import time
 # You can use the functions in othello_shared to write your AI
 from othello_shared import find_lines, get_possible_moves, get_score, play_move
 
+visited_states = {}
+
 def eprint(*args, **kwargs): #you can use this for debugging, as it will print to sterr and not stdout
     print(*args, file=sys.stderr, **kwargs)
     
@@ -43,20 +45,32 @@ def minimax_min_node(board, color, limit = 0, caching = 0, depth=0):
         return ()
     elif limit==0:
         #print("min, at limit, depth {}, utility {}".format(depth, compute_utility(board, opponent_color)))
-        return (compute_utility(board, opponent_color), )
+        if board in visited_states and caching == 1:
+            utility_value = visited_states[board]
+        else:
+            print("not in")
+            utility_value = compute_utility(board, opponent_color)
+            visited_states[board] = utility_value # create new mapping
+        return (utility_value, )
     else:
         #utility_values = []
         curr_min = float('inf')
         selected_move = None
         for move in possible_moves:
             new_board = play_move(board, color, move[0], move[1])
-            node = minimax_max_node(new_board, opponent_color, limit - 1, caching, depth+1)
-            if len(node) == 0:
-                utility_value = compute_utility(new_board, opponent_color)
-            elif len(node) == 1:
-                utility_value = node[0]
+            if new_board in visited_states and caching == 1:
+                utility_value = visited_states[new_board]
             else:
-                utility_value = node[1]
+                node = minimax_max_node(new_board, opponent_color, limit - 1, caching, depth + 1)
+                if len(node) == 0:
+                    utility_value = compute_utility(new_board, opponent_color)
+                elif len(node) == 1:
+                    utility_value = node[0]
+                else:
+                    utility_value = node[1]
+                if caching == 1:
+                    print("not in")
+                    visited_states[new_board] = utility_value
             if utility_value < curr_min:
                 curr_min = utility_value
                 selected_move = move
@@ -73,25 +87,38 @@ def minimax_max_node(board, color, limit = 0, caching = 0, depth=0): #returns hi
         opponent_color = 2
     possible_moves = get_possible_moves(board, color)
     if possible_moves == []:
-        #print("max, end, depth {}, utility {}".format(depth,compute_utility(board, color)))
+        # print("max, end, depth {}, utility {}".format(depth,compute_utility(board, color)))
         return ()
     elif limit == 0:
-        #print("max, at limit, depth {}, utility {}".format(depth,compute_utility(board, color)))
-        return (compute_utility(board, color), )
+        # print("max, at limit, depth {}, utility {}".format(depth,compute_utility(board, color)))
+        if board in visited_states and caching == 1:
+            utility_value = visited_states[board]
+        else:
+            utility_value = compute_utility(board, opponent_color)
+            if caching == 1:
+                visited_states[board] = utility_value # create new mapping
+        return (utility_value, )
     else:
-        utility_values=[]
+        curr_max = float("-Inf")
+        selected_move = None
         for move in possible_moves:
             new_board = play_move(board, color, move[0], move[1])
-            node = minimax_min_node(new_board, opponent_color, limit - 1, caching, depth+1)
-            if len(node) == 0:
-                utility_value = compute_utility(new_board, color)
-            elif len(node) == 1:
-                utility_value = node[0]
-            else:
-                utility_value = node[1]
-            utility_values.append((move, utility_value))
+
+                node = minimax_min_node(new_board, opponent_color, limit - 1, caching, depth + 1)
+                if len(node) == 0:
+                    utility_value = compute_utility(new_board, color)
+                elif len(node) == 1:
+                    utility_value = node[0]
+                else:
+                    utility_value = node[1]
+                if caching == 1:
+                    print("not in")
+                    visited_states[new_board] = utility_value
+            if utility_value > curr_max:
+                curr_max = utility_value
+                selected_move = move
             #print("max; depth {}; values so far: {}".format(depth, utility_values))
-        return max(utility_values, key=lambda x: x[1])
+        return (selected_move, curr_max)
     # return None
 
 def select_move_minimax(board, color, limit=0, caching = 0):
