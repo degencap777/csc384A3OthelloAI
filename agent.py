@@ -85,6 +85,7 @@ def minimax_max_node(board, color, limit = 0, caching = 0, depth=0): #returns hi
         opponent_color = 1
     else:
         opponent_color = 2
+
     possible_moves = get_possible_moves(board, color)
     if possible_moves == []:
         # print("max, end, depth {}, utility {}".format(depth,compute_utility(board, color)))
@@ -103,7 +104,9 @@ def minimax_max_node(board, color, limit = 0, caching = 0, depth=0): #returns hi
         selected_move = None
         for move in possible_moves:
             new_board = play_move(board, color, move[0], move[1])
-
+            if new_board in visited_states and caching == 1:
+                utility_value = visited_states[new_board]
+            else:
                 node = minimax_min_node(new_board, opponent_color, limit - 1, caching, depth + 1)
                 if len(node) == 0:
                     utility_value = compute_utility(new_board, color)
