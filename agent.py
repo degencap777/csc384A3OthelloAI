@@ -10,6 +10,7 @@ import time
 from othello_shared import find_lines, get_possible_moves, get_score, play_move
 
 visited_states = {}
+visited_states_ab = {}
 
 def eprint(*args, **kwargs): #you can use this for debugging, as it will print to sterr and not stdout
     print(*args, file=sys.stderr, **kwargs)
@@ -34,97 +35,77 @@ def compute_heuristic(board, color): #not implemented, optional
     return 0 #change this!
 
 ############ MINIMAX ###############################
+
+
 def minimax_min_node(board, color, limit = 0, caching = 0, depth=0):
     if color == 2:
-        opponent_color = 1
+        self_color = 1
     else:
-        opponent_color = 2
-    possible_moves = get_possible_moves(board, color)
-    if possible_moves == []:
-        #print("min, end, depth {}, utility {}".format(depth, compute_utility(board, opponent_color)))
-        return ()
-    elif limit==0:
+        self_color = 2
+    if limit == 0 or get_possible_moves(board, self_color) == []:
         #print("min, at limit, depth {}, utility {}".format(depth, compute_utility(board, opponent_color)))
         if board in visited_states and caching == 1:
-            utility_value = visited_states[board]
+            return visited_states[board]
         else:
-            print("not in")
-            utility_value = compute_utility(board, opponent_color)
-            visited_states[board] = utility_value # create new mapping
-        return (utility_value, )
+            # print("not in")
+            utility_value = compute_utility(board, color)
+            if caching == 1:
+                visited_states[board] = (None, utility_value)
+            return (None, utility_value)
     else:
-        #utility_values = []
-        curr_min = float('inf')
-        selected_move = None
-        for move in possible_moves:
-            new_board = play_move(board, color, move[0], move[1])
-            if new_board in visited_states and caching == 1:
-                utility_value = visited_states[new_board]
-            else:
-                node = minimax_max_node(new_board, opponent_color, limit - 1, caching, depth + 1)
-                if len(node) == 0:
-                    utility_value = compute_utility(new_board, opponent_color)
-                elif len(node) == 1:
-                    utility_value = node[0]
-                else:
-                    utility_value = node[1]
-                if caching == 1:
-                    print("not in")
-                    visited_states[new_board] = utility_value
-            if utility_value < curr_min:
-                curr_min = utility_value
-                selected_move = move
-            #utility_values.append((move, utility_value))
-            #print("min; depth {}; values so far: {}".format(depth, utility_values))
-        # return min(utility_values, key=lambda x: x[1])
-        return (selected_move, curr_min)
+        if caching==1 and board in visited_states:
+            return visited_states[board]
+        else:
+            possible_moves = get_possible_moves(board, self_color)
+            curr_min = float('inf')
+            selected_move = None
+            for move in possible_moves:
+                new_board = play_move(board, self_color, move[0], move[1])
+                node = minimax_max_node(new_board, color, limit - 1, caching, depth + 1)
+                utility_value = node[1]
+                if utility_value < curr_min:
+                    curr_min = utility_value
+                    selected_move = move
+                #print("min; depth {}; values so far: {}".format(depth, utility_values))
+            if caching == 1:
+                visited_states[board] = (selected_move, curr_min)
+            return (selected_move, curr_min)
 
 def minimax_max_node(board, color, limit = 0, caching = 0, depth=0): #returns highest possible utility
-    #IMPLEMENT
     if color == 2:
         opponent_color = 1
     else:
         opponent_color = 2
-
-    possible_moves = get_possible_moves(board, color)
-    if possible_moves == []:
-        # print("max, end, depth {}, utility {}".format(depth,compute_utility(board, color)))
-        return ()
-    elif limit == 0:
+    if limit == 0 or get_possible_moves(board, color) == []:
         # print("max, at limit, depth {}, utility {}".format(depth,compute_utility(board, color)))
         if board in visited_states and caching == 1:
-            utility_value = visited_states[board]
+            return visited_states[board]
         else:
-            utility_value = compute_utility(board, opponent_color)
+            utility_value = compute_utility(board, color)
             if caching == 1:
-                visited_states[board] = utility_value # create new mapping
-        return (utility_value, )
+                visited_states[board] = (None, utility_value) # create new mapping
+        return (None, utility_value)
     else:
-        curr_max = float("-Inf")
-        selected_move = None
-        for move in possible_moves:
-            new_board = play_move(board, color, move[0], move[1])
-            if new_board in visited_states and caching == 1:
-                utility_value = visited_states[new_board]
-            else:
-                node = minimax_min_node(new_board, opponent_color, limit - 1, caching, depth + 1)
-                if len(node) == 0:
-                    utility_value = compute_utility(new_board, color)
-                elif len(node) == 1:
-                    utility_value = node[0]
-                else:
-                    utility_value = node[1]
-                if caching == 1:
-                    print("not in")
-                    visited_states[new_board] = utility_value
-            if utility_value > curr_max:
-                curr_max = utility_value
-                selected_move = move
-            #print("max; depth {}; values so far: {}".format(depth, utility_values))
-        return (selected_move, curr_max)
-    # return None
+        if caching == 1 and board in visited_states:
+            return visited_states[board]
+        else:
+            possible_moves = get_possible_moves(board, color)
+            curr_max = float("-Inf")
+            selected_move = None
+            for move in possible_moves:
+                new_board = play_move(board, color, move[0], move[1])
+                node = minimax_min_node(new_board, color, limit - 1, caching, depth + 1)
+                utility_value = node[1]
+                if utility_value > curr_max:
+                    curr_max = utility_value
+                    selected_move = move
+                #print("max; depth {}; values so far: {}".format(depth, utility_values))
+            # cache the move
+            if caching==1:
+                visited_states[board]= (selected_move, curr_max) # best move and current max
+            return (selected_move, curr_max)
 
-def select_move_minimax(board, color, limit=0, caching = 0):
+def select_move_minimax(board, color, limit=-1, caching = 0):
     """
     Given a board and a player color, decide on a move. 
     The return value is a tuple of integers (i,j), where
@@ -138,76 +119,99 @@ def select_move_minimax(board, color, limit=0, caching = 0):
     If caching is OFF (i.e. 0), do NOT use state caching to reduce the number of state evaluations.    
     """
     value = minimax_max_node(board, color, limit, caching)
-    if len(value) == 0:
-        return value
+    if value[0] is None:
+        return ()
     else:
         return value[0]
 
 ############ ALPHA-BETA PRUNING #####################
-def alphabeta_min_node(board, color, alpha, beta, limit, caching = 0, ordering = 0, depth = 0):
+def alphabeta_min_node(board, color, alpha, beta, limit, caching = 0, ordering = 0):
     if color == 2:
-        opponent_color = 1
+        self_color = 1
     else:
-        opponent_color = 2
-    possible_moves = get_possible_moves(board, color)
-    if possible_moves == []:
-        #print("min, end, depth {}, utility {}".format(depth, compute_utility(board, opponent_color)))
-        return ()
-    elif limit==0:
-        #print("min, at limit, depth {}, utility {}".format(depth, compute_utility(board, opponent_color)))
-        return (compute_utility(board, opponent_color), )
+        self_color = 2
+    if limit==0 or get_possible_moves(board, self_color) == []:
+        if board in visited_states_ab:
+            return visited_states_ab[board]
+        else:
+            # print("min, at limit, depth {}, utility {}".format(depth, compute_utility(board, opponent_color)))
+            rval = (None, compute_utility(board, color))
+            visited_states_ab[board] = rval
+            return rval
     else:
-        selected_move = None
-        for move in possible_moves:
-            new_board = play_move(board, color, move[0], move[1])
-            node = alphabeta_max_node(new_board, opponent_color, alpha, beta, limit - 1, caching, ordering, depth+1)
-            if len(node) == 0:
-                beta_candidate = compute_utility(new_board, opponent_color)
-            elif len(node) == 1:
-                beta_candidate = node[0]
-            else:
+        if caching == 1 and board in visited_states:
+            return visited_states_ab[board]
+        else:
+            possible_moves = get_possible_moves(board, self_color)
+            selected_move = None
+            board_mapping = []
+            for move in possible_moves:
+                new_board = play_move(board, self_color, move[0], move[1])
+                value = compute_utility(new_board, color)
+                board_mapping.append((value, move))
+            if ordering == 1:
+                board_mapping = sorted(board_mapping, key=lambda x: x[0])
+                #print(board_mapping)
+            for item in board_mapping:
+                new_board = play_move(board, self_color, item[1][0], item[1][1])
+                node = alphabeta_max_node(new_board, color, alpha, beta, limit - 1, caching, ordering)
                 beta_candidate = node[1]
-            if beta_candidate < beta:
-                beta = beta_candidate
-                selected_move = move
-                if alpha > beta:
-                    break
-            #print("min; depth {}; values so far: {}".format(depth, utility_values))
-        return (selected_move, beta)
+                if beta_candidate < beta:
+                    beta = beta_candidate
+                    selected_move = item[1]
+                    if alpha > beta:
+                        break
+                # print("min; depth {}; values so far: {}".format(depth, utility_values))
+            rval = (selected_move, beta)
+            if caching == 1:
+                visited_states_ab[board] = rval
+            return rval
 
-def alphabeta_max_node(board, color, alpha, beta, limit, caching = 0, ordering = 0, depth=0):
+
+def alphabeta_max_node(board, color, alpha, beta, limit, caching = 0, ordering = 0):
     if color == 2:
         opponent_color = 1
     else:
         opponent_color = 2
-    possible_moves = get_possible_moves(board, color)
-    if possible_moves == []:
-        # print("max, end, depth {}, utility {}".format(depth,compute_utility(board, color)))
-        return ()
-    elif limit == 0:
-        # print("max, at limit, depth {}, utility {}".format(depth,compute_utility(board, color)))
-        return (compute_utility(board, color),)
+    if limit == 0 or get_possible_moves(board, color) == []:
+        if board in visited_states_ab:
+            return visited_states_ab[board]
+        else:
+            # print("max, at limit, depth {}, utility {}".format(depth,compute_utility(board, color)))
+            rval = (None, compute_utility(board, color))
+            visited_states_ab[board] = rval
+            return rval
     else:
-        selected_move = None
-        for move in possible_moves:
-            new_board = play_move(board, color, move[0], move[1])
-            node = alphabeta_min_node(new_board, opponent_color, alpha, beta, limit - 1, caching, ordering, depth + 1)
-            if len(node) == 0: # terminal
-                alpha_candidate = compute_utility(new_board, color)
-            elif len(node) == 1: # terminal
-                alpha_candidate = node[0]
-            else: # non-terminal
+        if caching == 1 and board in visited_states:
+            return visited_states_ab[board]
+        else:
+            possible_moves = get_possible_moves(board, color)
+            selected_move = None
+            board_mapping = []
+            for move in possible_moves:
+                new_board = play_move(board, color, move[0], move[1])
+                value = compute_utility(new_board, color)
+                board_mapping.append((value, move))
+            if ordering == 1:
+                board_mapping = sorted(board_mapping, key=lambda x: x[0], reverse=True)
+            for item in board_mapping:
+                new_board = play_move(board, color, item[1][0], item[1][1])
+                node = alphabeta_min_node(new_board, color, alpha, beta, limit - 1, caching, ordering)
                 alpha_candidate = node[1]
-            # change alpha
-            if alpha_candidate > alpha:
-                alpha = alpha_candidate
-                selected_move = move
-                if beta < alpha:
-                    break
-            # print("max; depth {}; values (a,b) so far: {}, {}".format(depth, alpha, beta))
-        return (selected_move, alpha)
+                # change alpha
+                if alpha_candidate > alpha:
+                    alpha = alpha_candidate
+                    selected_move = item[1] # move
+                    if beta < alpha:
+                        break
+                # print("max; depth {}; values (a,b) so far: {}, {}".format(depth, alpha, beta))
+            rval = (selected_move, alpha)
+            if caching == 1:
+                visited_states_ab[board] = rval
+            return rval
 
-def select_move_alphabeta(board, color, limit, caching = 0, ordering = 0):
+
+def select_move_alphabeta(board, color, limit=-1, caching = 0, ordering = 0):
     """
     Given a board and a player color, decide on a move. 
     The return value is a tuple of integers (i,j), where
@@ -226,8 +230,8 @@ def select_move_alphabeta(board, color, limit, caching = 0, ordering = 0):
     # alphabeta_max_node(board, color, alpha, beta, limit, caching = 0, ordering = 0, depth=0):
 
     value = alphabeta_max_node(board, color, float('-inf'), float('inf'), limit, caching, ordering)
-    if len(value) == 0:
-        return value
+    if value[0] is None:
+        return ()
     else:
         return value[0]
 
@@ -272,7 +276,7 @@ def run_ai():
         light_score = int(light_score_s)
 
         if status == "FINAL": # Game is over.
-            print
+            print("Game Over")
         else:
             board = eval(input()) # Read in the input and turn it into a Python
                                   # object. The format is a list of rows. The
