@@ -44,17 +44,17 @@ def minimax_min_node(board, color, limit = 0, caching = 0, depth=0):
         self_color = 2
     if limit == 0 or get_possible_moves(board, self_color) == []:
         #print("min, at limit, depth {}, utility {}".format(depth, compute_utility(board, opponent_color)))
-        if board in visited_states and caching == 1:
-            return visited_states[board]
+        if (board, self_color) in visited_states and caching == 1:
+            return visited_states[(board, self_color)]
         else:
             # print("not in")
             utility_value = compute_utility(board, color)
             if caching == 1:
-                visited_states[board] = (None, utility_value)
+                visited_states[(board, self_color)] = (None, utility_value)
             return (None, utility_value)
     else:
-        if caching==1 and board in visited_states:
-            return visited_states[board]
+        if caching==1 and (board, self_color) in visited_states:
+            return visited_states[(board, self_color)]
         else:
             possible_moves = get_possible_moves(board, self_color)
             curr_min = float('inf')
@@ -68,7 +68,7 @@ def minimax_min_node(board, color, limit = 0, caching = 0, depth=0):
                     selected_move = move
                 #print("min; depth {}; values so far: {}".format(depth, utility_values))
             if caching == 1:
-                visited_states[board] = (selected_move, curr_min)
+                visited_states[(board, self_color)] = (selected_move, curr_min)
             return (selected_move, curr_min)
 
 def minimax_max_node(board, color, limit = 0, caching = 0, depth=0): #returns highest possible utility
@@ -78,16 +78,16 @@ def minimax_max_node(board, color, limit = 0, caching = 0, depth=0): #returns hi
         opponent_color = 2
     if limit == 0 or get_possible_moves(board, color) == []:
         # print("max, at limit, depth {}, utility {}".format(depth,compute_utility(board, color)))
-        if board in visited_states and caching == 1:
-            return visited_states[board]
+        if (board, color) in visited_states and caching == 1:
+            return visited_states[(board, color)]
         else:
             utility_value = compute_utility(board, color)
             if caching == 1:
                 visited_states[board] = (None, utility_value) # create new mapping
         return (None, utility_value)
     else:
-        if caching == 1 and board in visited_states:
-            return visited_states[board]
+        if caching == 1 and (board, color) in visited_states:
+            return visited_states[(board, color)]
         else:
             possible_moves = get_possible_moves(board, color)
             curr_max = float("-Inf")
@@ -102,7 +102,7 @@ def minimax_max_node(board, color, limit = 0, caching = 0, depth=0): #returns hi
                 #print("max; depth {}; values so far: {}".format(depth, utility_values))
             # cache the move
             if caching==1:
-                visited_states[board]= (selected_move, curr_max) # best move and current max
+                visited_states[(board, color)] = (selected_move, curr_max) # best move and current max
             return (selected_move, curr_max)
 
 def select_move_minimax(board, color, limit=-1, caching = 0):
@@ -131,16 +131,16 @@ def alphabeta_min_node(board, color, alpha, beta, limit, caching = 0, ordering =
     else:
         self_color = 2
     if limit==0 or get_possible_moves(board, self_color) == []:
-        if board in visited_states_ab:
-            return visited_states_ab[board]
+        if (board, self_color) in visited_states_ab:
+            return visited_states_ab[(board, self_color)]
         else:
             # print("min, at limit, depth {}, utility {}".format(depth, compute_utility(board, opponent_color)))
             rval = (None, compute_utility(board, color))
-            visited_states_ab[board] = rval
+            visited_states_ab[(board, self_color)] = rval
             return rval
     else:
-        if caching == 1 and board in visited_states:
-            return visited_states_ab[board]
+        if caching == 1 and (board, self_color) in visited_states:
+            return visited_states_ab[(board, self_color)]
         else:
             possible_moves = get_possible_moves(board, self_color)
             selected_move = None
@@ -164,7 +164,7 @@ def alphabeta_min_node(board, color, alpha, beta, limit, caching = 0, ordering =
                 # print("min; depth {}; values so far: {}".format(depth, utility_values))
             rval = (selected_move, beta)
             if caching == 1:
-                visited_states_ab[board] = rval
+                visited_states_ab[(board, self_color)] = rval
             return rval
 
 
@@ -174,16 +174,16 @@ def alphabeta_max_node(board, color, alpha, beta, limit, caching = 0, ordering =
     else:
         opponent_color = 2
     if limit == 0 or get_possible_moves(board, color) == []:
-        if board in visited_states_ab:
-            return visited_states_ab[board]
+        if (board, color) in visited_states_ab:
+            return visited_states_ab[(board, color)]
         else:
             # print("max, at limit, depth {}, utility {}".format(depth,compute_utility(board, color)))
             rval = (None, compute_utility(board, color))
-            visited_states_ab[board] = rval
+            visited_states_ab[(board, color)] = rval
             return rval
     else:
-        if caching == 1 and board in visited_states:
-            return visited_states_ab[board]
+        if caching == 1 and (board, color) in visited_states:
+            return visited_states_ab[(board, color)]
         else:
             possible_moves = get_possible_moves(board, color)
             selected_move = None
@@ -207,7 +207,7 @@ def alphabeta_max_node(board, color, alpha, beta, limit, caching = 0, ordering =
                 # print("max; depth {}; values (a,b) so far: {}, {}".format(depth, alpha, beta))
             rval = (selected_move, alpha)
             if caching == 1:
-                visited_states_ab[board] = rval
+                visited_states_ab[(board, color)] = rval
             return rval
 
 
