@@ -107,7 +107,8 @@
       <workItem from="1584231798161" duration="1427000" />
       <workItem from="1584294478677" duration="815000" />
       <workItem from="1584299191091" duration="21532000" />
-      <workItem from="1584401222001" duration="8867000" />
+      <workItem from="1584401222001" duration="9755000" />
+      <workItem from="1584461859343" duration="1606000" />
     </task>
     <servers />
   </component>
@@ -115,26 +116,26 @@
     <option name="version" value="1" />
   </component>
   <component name="WindowStateProjectService">
-    <state width="1877" height="367" key="GridCell.Tab.0.bottom" timestamp="1584417088883">
+    <state width="1877" height="253" key="GridCell.Tab.0.bottom" timestamp="1584419548595">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1458" height="225" key="GridCell.Tab.0.bottom/0.0.1500.960@0.0.1500.960" timestamp="1584386942442" />
-    <state width="1877" height="367" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1584417088883" />
-    <state width="1877" height="367" key="GridCell.Tab.0.center" timestamp="1584417088883">
+    <state width="1877" height="253" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1584419548595" />
+    <state width="1877" height="253" key="GridCell.Tab.0.center" timestamp="1584419548595">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1458" height="225" key="GridCell.Tab.0.center/0.0.1500.960@0.0.1500.960" timestamp="1584386942442" />
-    <state width="1877" height="367" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1584417088883" />
-    <state width="1877" height="367" key="GridCell.Tab.0.left" timestamp="1584417088882">
+    <state width="1877" height="253" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1584419548595" />
+    <state width="1877" height="253" key="GridCell.Tab.0.left" timestamp="1584419548595">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1458" height="225" key="GridCell.Tab.0.left/0.0.1500.960@0.0.1500.960" timestamp="1584386942442" />
-    <state width="1877" height="367" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1584417088882" />
-    <state width="1877" height="367" key="GridCell.Tab.0.right" timestamp="1584417088883">
+    <state width="1877" height="253" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1584419548595" />
+    <state width="1877" height="253" key="GridCell.Tab.0.right" timestamp="1584419548595">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1458" height="225" key="GridCell.Tab.0.right/0.0.1500.960@0.0.1500.960" timestamp="1584386942442" />
-    <state width="1877" height="367" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1584417088883" />
+    <state width="1877" height="253" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1584419548595" />
     <state width="1458" height="316" key="GridCell.Tab.1.bottom" timestamp="1584214872687">
       <screen x="0" y="0" width="1500" height="960" />
     </state>
@@ -156,11 +157,11 @@
     </state>
     <state x="254" y="125" key="SettingsEditor/0.0.1500.960@0.0.1500.960" timestamp="1584057304572" />
     <state x="325" y="135" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1584294776704" />
-    <state x="571" y="334" key="com.intellij.ide.util.TipDialog" timestamp="1584401453193">
+    <state x="571" y="334" key="com.intellij.ide.util.TipDialog" timestamp="1584461859706">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="446" y="308" key="com.intellij.ide.util.TipDialog/0.0.1500.960@0.0.1500.960" timestamp="1584299192068" />
-    <state x="571" y="334" key="com.intellij.ide.util.TipDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1584401453193" />
+    <state x="571" y="334" key="com.intellij.ide.util.TipDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1584461859706" />
     <state x="439" y="112" width="620" height="735" key="find.popup" timestamp="1584306086562">
       <screen x="0" y="0" width="1500" height="960" />
     </state>

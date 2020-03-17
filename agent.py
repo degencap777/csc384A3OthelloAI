@@ -72,10 +72,10 @@ def minimax_min_node(board, color, limit = 0, caching = 0, depth=0):
             return (selected_move, curr_min)
 
 def minimax_max_node(board, color, limit = 0, caching = 0, depth=0): #returns highest possible utility
-    if color == 2:
-        opponent_color = 1
-    else:
-        opponent_color = 2
+    # if color == 2:
+    #     opponent_color = 1
+    # else:
+    #     opponent_color = 2
     if limit == 0 or get_possible_moves(board, color) == []:
         # print("max, at limit, depth {}, utility {}".format(depth,compute_utility(board, color)))
         if (board, color) in visited_states and caching == 1:
@@ -179,7 +179,8 @@ def alphabeta_max_node(board, color, alpha, beta, limit, caching = 0, ordering =
         else:
             # print("max, at limit, depth {}, utility {}".format(depth,compute_utility(board, color)))
             rval = (None, compute_utility(board, color))
-            visited_states_ab[(board, color)] = rval
+            if caching==1:
+                visited_states_ab[(board, color)] = rval
             return rval
     else:
         if caching == 1 and (board, color) in visited_states:
